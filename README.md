@@ -46,6 +46,7 @@ Controller: 전달할 데이터들을 List(목록)로 묶어서, List 자체를 
 View: th:each 반복문을 사용하여 List의 아이템을 하나씩 자동으로 출력
 
 4. 2주차 주요 문법
+   
 4-1) Java Controller 문법
 @Controller    @GetMapping("/경로")	                  public String 메서드명()
 Model model    model.addAttribute("Key", "Value")	    import
