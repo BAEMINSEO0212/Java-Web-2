@@ -6,12 +6,14 @@
 스스로 생각하여 응용1(한줄 표현), 응용2(실무자 관점에서 반복문 표현) 추가
 
 ## 2주차 내용 정리(설정 제외)
+
 1. 스프링 부트의 기본 동작 원리: MVC 패턴의 이해
 Controller (조정자): 사용자의 URL 요청(localhost:8080/hello 등)을 가장 먼저 받는 객체, 어떤 일을 할지 결정하고 지시함
 View (화면): 사용자에게 보여질 최종 결과물
 Model (데이터 상자): Controller가 View에게 전달할 데이터를 담는 상자
 
 2. 핵심 프로그래밍 3요소
+   
 2-1) View 작성: hello.html 만들기(html 기본 내용은 자바웹(1)에서 배운 부분)
 <html xmlns:th="http://www.thymeleaf.org">
  -> Thymeleaf 문법으로, Model에 담긴 데이터 중 이름이 "data"인 것을 찾아 그 값을 이 태그의 텍스트로 출력하라는 의미
@@ -28,6 +30,7 @@ model.addAttribute("Key", "Value"); 형태로 데이터를 담습니다.
 "Value": 실제로 전달할 값
 
 3. 연습문제 응용 및 심화: 여러 데이터 처리하기
+   
 3-1) 기본 풀이
 Controller: addAttribute를 여러 번 사용하되, 각 데이터마다 고유한 Key를 부여
 View: Controller에서 지정한 각각의 Key를 사용하여 p 태그를 여러 개 만듬
