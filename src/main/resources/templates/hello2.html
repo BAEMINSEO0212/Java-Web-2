@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello 페이지</title>
+</head>
+<body>
+    <h1>안녕하세요!</h1>
+    <!-- 2주차 과제 기본 풀이 -->
+    <p th:text="${name}"></p>
+    <p th:text="${hello}"></p>
+    <p th:text="${today}"></p>
+    <p th:text="${weather}"></p>
+    <p th:text="${comment}"></p>
+
+    <!-- 2주차 과제 응용 풀이 1(한줄로 표현하기)
+    <p th:utext="${name} + '<br>' + ${hello} + '<br>' + ${today} + '<br>' + ${weather} + '<br>' + ${comment}"></p>
+    -->
+
+    <!-- 2주차 과제 응용 풀이 2(반복문(th:each)을 이용)
+    <p th:each="msg : ${messages}" th:text="${msg}"></p>
+    -->
+
+    <a href="/">홈페이지 메인</a>
+</body>
+</html>
