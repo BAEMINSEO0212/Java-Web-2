@@ -49,4 +49,9 @@ public class DemoController {
      * }
      */
 
+    // 3주차 추가 부분(about_detailed.html 연결)
+    @GetMapping("/about_detailed")
+    public String about() {
+        return "about_detailed";
+    }
 }
