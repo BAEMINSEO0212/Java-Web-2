@@ -83,4 +83,9 @@ public class DemoController {
         return "testdb";
     }
 
+    // @GetMapping("/article_list")
+    // public String article_list() {
+    // return "article_list";
+    // }
+
 }
