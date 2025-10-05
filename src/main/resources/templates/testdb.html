@@ -1,11 +1,29 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <title>데이터베이스 테스트</title>
+    <meta charset="UTF-8">
+    <title>사용자 목록</title>
 </head>
+
 <body>
     <h1>User List</h1>
-    <p>아이디(기본키) : <span th:text="${data4.id}"></span></p>
-    <p>이름 : <span th:text="${data4.name}"></span></p>
+
+    <!-- 
+      Controller가 보내준 'userList' 목록을 반복합니다.
+      목록의 각 항목은 'user'라는 변수 이름으로 사용됩니다.
+    -->
+    <div th:each="user : ${userList}">
+        <p>
+            <span>아이디(기본키) : </span>
+            <span th:text="${user.id}"></span>
+        </p>
+        <p>
+            <span>이름 : </span>
+            <span th:text="${user.name}"></span>
+        </p>
+    </div>
+
 </body>
+
 </html>

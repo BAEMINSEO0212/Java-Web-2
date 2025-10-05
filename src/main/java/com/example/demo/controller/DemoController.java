@@ -8,7 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.ui.Model; // 추가된 부분
 
-//import java.util.List; 2주차 과제 응용2 부분
+import java.util.List;
 
 @Controller
 public class DemoController {
@@ -77,9 +77,8 @@ public class DemoController {
 
     @GetMapping("/testdb")
     public String getAllTestDBs(Model model) {
-        TestDB test = testService.findByName("홍길동");
-        model.addAttribute("data4", test);
-        System.out.println("데이터 출력 디버그 : " + test);
+        List<TestDB> userList = testService.findAll();
+        model.addAttribute("userList", userList);
         return "testdb";
     }
 

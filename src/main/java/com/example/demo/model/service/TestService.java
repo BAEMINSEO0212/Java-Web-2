@@ -2,17 +2,20 @@ package com.example.demo.model.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.example.demo.model.domain.TestDB;
 import com.example.demo.model.repository.TestRepository;
-import lombok.RequiredArgsConstructor;
 
-@Service // 서비스 등록, 스프링 내부 자동 등록됨
-@RequiredArgsConstructor // 생성자 생성
+import java.util.List;
+
+@Service
 public class TestService {
-    @Autowired // 객체 의존성 주입 DI(컨테이너 내부 등록)
-    private TestRepository testRepository;
 
-    public TestDB findByName(String name) { // 이름 찾기
-        return (TestDB) testRepository.findByName(name);
+    @Autowired
+    private TestRepository testRepository; // DB와 통신하는 부품(Repository)
+
+    // DB에 저장된 모든 사용자 정보를 List 형태로 가져오는 기능을 만듭니다.
+    public List<TestDB> findAll() {
+        return testRepository.findAll();
     }
 }
