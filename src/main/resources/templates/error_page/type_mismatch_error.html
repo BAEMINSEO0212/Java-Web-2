@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>잘못된 요청</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="mt-5 text-center">
+            <!-- 제목 수정 -->
+            <h1 class="text-danger">블로그 게시판 - 잘못된 접근(문자열 변환 에러)</h1>
+            <div class="alert alert-danger mt-4" role="alert">
+                <h4 class="alert-heading">잘못된 게시판 접근입니다!</h4>
+                <!-- 메시지 수정 -->
+                <p>요청하신 URL의 ID 값이 올바른 숫자 형식이 아닙니다.</p>
+                <hr>
+                <p class="mb-0">이전 페이지로 돌아가시려면 아래 버튼을 클릭해주세요.</p>
+            </div>
+            <a href="javascript:history.back()" class="btn btn-primary mt-3">이전 페이지로</a>
+        </div>
+    </div>
+</body>
+</html>
