@@ -20,17 +20,7 @@
 
 ## 25년 10월 19일 6주차 연습문제 해결(23시 10분)
 
-## 2주차 핵심 요약
+## 25년 11월 5일 7주차 수업(블로그 게시판 2)
 
-1. MVC 패턴: 스프링 부트의 기본 동작 방식
-   Controller: URL 요청을 받아 처리 방법을 결정 (@GetMapping)
-   Model: Controller가 View로 전달할 데이터를 담는 상자 (model.addAttribute)
-   View: Model의 데이터로 사용자에게 보여줄 최종 화면 (HTML + Thymeleaf)
-
-2. 데이터 전달 흐름
-   Controller: model.addAttribute("key", 데이터)로 Model에 데이터를 담는다.
-   View (HTML): Thymeleaf 문법 ${key}를 사용해 Model의 데이터를 꺼내 쓴다.
-
-3. 여러 데이터 처리 Best Practice
-   Controller: 여러 데이터를 List로 묶어 Model에 한 번에 담는다.
-   View (HTML): th:each 반복문을 사용해 List의 모든 데이터를 자동으로 출력한다.
+진도 못따라감 오류 문제로 깃허브 내용으로 다시 백업함
+프로필만 수정했고 블로그 게시판(new) 제작 예정
