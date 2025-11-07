@@ -71,7 +71,7 @@ public class BlogController {
     }
 
     // --- 새로운 Board 게시판 관련 코드 ---
-    @GetMapping("/")
+    @GetMapping("/board_list")
     public String board_list(Model model) {
         List<Board> list = blogService.findAll();
         model.addAttribute("boards", list);
@@ -88,6 +88,46 @@ public class BlogController {
         } else {
             return "/error_page/article_error"; // 오류 페이지로 연결
         }
+    }
+
+    @GetMapping("/board_edit/{id}")
+    public String board_edit(Model model, @PathVariable Long id) {
+        // 1. 서비스 계층에 id를 전달하여 해당 게시글의 정보를 가져온다.
+        Optional<Board> boardData = blogService.findById(id);
+
+        // 2. 게시글 정보가 존재하면,
+        if (boardData.isPresent()) {
+            // 3. 모델에 'board'라는 이름으로 게시글 데이터를 담아서,
+            model.addAttribute("board", boardData.get());
+            // 4. 'board_edit.html' 뷰로 전달한다.
+            return "board_edit";
+        } else {
+            // 게시글이 없으면 에러 페이지로 보낸다.
+            return "/error_page/article_error";
+        }
+    }
+
+    @PutMapping("/api/board_edit/{id}")
+    public String updateBoard(@PathVariable Long id, @ModelAttribute AddArticleRequest request) {
+        // 1. 서비스 계층의 update 메소드를 호출하여 게시글을 수정한다.
+        blogService.update(id, request);
+        // 2. 수정이 완료되면, 게시판 목록 페이지로 리다이렉트(redirect)한다.
+        return "redirect:/board_list";
+    }
+
+    @DeleteMapping("/api/board_delete/{id}")
+    public String deleteBoard(@PathVariable Long id) {
+        // 1. 서비스의 delete 메소드를 호출하여 DB에서 해당 id의 데이터를 삭제합니다.
+        blogService.delete(id);
+
+        // 2. 삭제가 완료되면, 게시판 목록 페이지로 리다이렉트합니다.
+        return "redirect:/board_list";
+    }
+
+    @PostMapping("/api/board_add")
+    public String addBoard(@ModelAttribute AddArticleRequest request) {
+        blogService.save(request);
+        return "redirect:/board_list";
     }
 
 }
