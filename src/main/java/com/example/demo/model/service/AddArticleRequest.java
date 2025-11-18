@@ -4,6 +4,9 @@ package com.example.demo.model.service;
 //import com.example.demo.model.domain.Board;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import com.example.demo.model.domain.Board;
+
 import lombok.AllArgsConstructor;
 
 @Data
@@ -18,6 +21,17 @@ public class AddArticleRequest {
     private String newdate;
     private String count;
     private String likec;
+
+    public Board toEntity() {
+        return Board.builder()
+                .title(title)
+                .content(content)
+                .user("GUEST") // 임시 사용자
+                .newdate(java.time.LocalDate.now().toString()) // 임시 날짜
+                .count("0")
+                .likec("0")
+                .build();
+    }
 
     // toEntity() 메소드는 지금 사용하지 않으므로 주석 처리하거나 그대로 둬도 됩니다.
 }
