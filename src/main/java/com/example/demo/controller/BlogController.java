@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam; // [추가] @RequestParam import
+import org.springframework.web.bind.annotation.RequestParam;
 
-// [추가] 페이징 관련 클래스 import
+// 페이징 관련 클래스 import
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,13 +27,12 @@ public class BlogController {
     @Autowired
     BlogService blogService;
 
-    /* --- 기존 Article 관련 코드는 사용하지 않으므로 주석 처리 또는 삭제 --- */
+    /* --- 기존 Article 관련 코드는 현재 사용하지 않으므로 주석 처리 또는 삭제 --- */
 
     @GetMapping("/favicon.ico")
     public void favicon() {
+        // favicon 요청은 무시
     }
-
-    // --- 새로운 Board 게시판 관련 코드 ---
 
     /**
      * [9주차 핵심] 검색어(keyword)와 페이지 번호(page)를 파라미터로 받아
@@ -54,10 +53,15 @@ public class BlogController {
             boardPage = blogService.searchByKeyword(keyword, pageable); // 검색어가 있으면 제목으로 검색
         }
 
+        // [수정] 'list' 변수를 'boardPage'로 올바르게 변경했습니다.
+        long totalElements = boardPage.getTotalElements(); // 전체 게시글 수
+        long startNum = totalElements - (long) page * pageSize; // 페이지별 시작 번호 (역순)
+
         model.addAttribute("boards", boardPage); // 뷰에는 Page 객체 자체를 전달
         model.addAttribute("totalPages", boardPage.getTotalPages()); // 전체 페이지 수
         model.addAttribute("currentPage", page); // 현재 페이지 번호
         model.addAttribute("keyword", keyword); // 검색어
+        model.addAttribute("startNum", startNum); // [9주차 연습문제] 글 번호 표시를 위한 시작 번호
 
         return "board_list"; // board_list.html 뷰로 연결
     }
@@ -66,7 +70,8 @@ public class BlogController {
     public String board_view(Model model, @PathVariable Long id) {
         Optional<Board> boardData = blogService.findById(id);
         if (boardData.isPresent()) {
-            model.addAttribute("board", boardData.get()); // boards -> board로 변경 (단일 객체이므로)
+            // [수정] 상세 페이지에서는 단일 객체를 전달하므로 'board'라는 이름이 더 적합합니다. (기존 'boards' -> 'board')
+            model.addAttribute("board", boardData.get());
             return "board_view";
         } else {
             return "/error_page/article_error";

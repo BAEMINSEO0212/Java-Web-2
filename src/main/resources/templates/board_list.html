@@ -33,8 +33,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="board : ${boards}">
-                        <td th:text="${board.id}"></td>
+        <tr th:each="board, status : ${boards}">
+            <td th:text="${startNum - status.index}"></td>
+            <!-- [연습문제 수정] ID 대신 계산된 글번호 출력 -->
+
+
                         <td>
                             <a th:href="@{/board_view/{id}(id=${board.id})}">
                                 <span th:text="${board.title}"></span>
@@ -47,6 +50,7 @@
                     </tr>                    
                 </tbody>
             </table>
+            
             <a class="btn btn-primary" th:href="@{/board_write}">글쓰기</a>
             <nav aria-label="Page navigation" class="mt-4">
                 <ul class="pagination justify-content-center">
