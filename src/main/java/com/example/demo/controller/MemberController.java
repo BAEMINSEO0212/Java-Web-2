@@ -10,6 +10,10 @@ import com.example.demo.model.service.AddMemberRequest;
 
 import com.example.demo.model.domain.Member;
 import com.example.demo.model.service.MemberService;
+import jakarta.validation.Valid;
+
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 
 @Controller
 public class MemberController {
@@ -19,12 +23,6 @@ public class MemberController {
     @GetMapping("/join_new") // 회원 가입 페이지 연결
     public String join_new() {
         return "join_new"; // .HTML 연결
-    }
-
-    @PostMapping("/api/members") // 회원 가입 저장
-    public String addmembers(@ModelAttribute AddMemberRequest request) {
-        memberService.saveMember(request);
-        return "join_end"; // .HTML 연결
     }
 
     @GetMapping("/member_login") // 로그인 페이지 연결
@@ -43,4 +41,24 @@ public class MemberController {
             return "login"; // 로그인 실패 시 로그인 페이지로 리다이렉트
         }
     }
+
+    @PostMapping("/api/members")
+    public String addmembers(@Valid @ModelAttribute AddMemberRequest request, BindingResult bindingResult,
+            Model model) {
+
+        // [핵심] 검증 오류가 있는지 확인
+        if (bindingResult.hasErrors()) {
+            // 오류가 있다면, 오류 메시지를 Model에 담아서
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                model.addAttribute(error.getField() + "Error", error.getDefaultMessage());
+            }
+            // 다시 회원가입 페이지(join_new.html)로 돌려보냄
+            return "join_new";
+        }
+
+        // 검증을 통과해야만 아래 코드가 실행됨
+        memberService.saveMember(request);
+        return "join_end";
+    }
+
 }

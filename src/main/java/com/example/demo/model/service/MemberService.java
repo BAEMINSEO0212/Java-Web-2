@@ -8,6 +8,8 @@ import com.example.demo.model.domain.Member;
 import com.example.demo.model.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
+//import org.springframework.validation.annotation.Validated;
+import jakarta.validation.Valid;
 
 @Service
 @Transactional // 트랜잭션 처리(클래스 내 모든 메소드 대상)
@@ -23,7 +25,7 @@ public class MemberService {
         }
     }
 
-    public Member saveMember(AddMemberRequest request) {
+    public Member saveMember(@Valid AddMemberRequest request) {
         validateDuplicateMember(request); // 이메일 체크
         String encodedPassword = passwordEncoder.encode(request.getPassword());
         request.setPassword(encodedPassword); // 암호화된 비밀번호 설정

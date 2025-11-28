@@ -3,62 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <title>회원 가입 화면</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
 <div class="container">
     <h1 class="mt-5">회원 가입 화면</h1>
-    <!-- 회원가입 폼 -->
+
     <div class="mt-4">
         <div class="card shadow-sm">
             <div class="card-body">
                 <h3 class="card-title text-center mb-4">회원정보 입력</h3>
-                    <form th:action="@{/api/members}" method="post">
+
+                <!-- [추가] 이메일 중복 등 전체 오류 메시지 출력 영역 -->
+                <div th:if="${globalError}" class="alert alert-danger">
+                    <p th:text="${globalError}"></p>
+                </div>
+
+                <form th:action="@{/api/members}" method="post">
                     <!-- 이름 -->
                     <div class="form-group">
-                    <label for="name">이름</label>
-                    <input type="text" class="form-control" id="name" name="name" placeholder="이름을 입력하세요" required>
+                        <label for="name">이름</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="이름을 입력하세요">
+                        <!-- [추가] 이름 필드 오류 메시지 -->
+                        <p th:if="${nameError}" th:text="${nameError}" class="text-danger small"></p>
                     </div>
+
                     <!-- 이메일 -->
                     <div class="form-group">
-                    <label for="email">이메일</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="example@email.com" required>
+                        <label for="email">이메일</label>
+                        <input type="text" class="form-control" id="email" name="email" placeholder="example@email.com">
+                        <!-- [추가] 이메일 필드 오류 메시지 -->
+                        <p th:if="${emailError}" th:text="${emailError}" class="text-danger small"></p>
                     </div>
                         
                     <!-- 비밀번호 -->
                     <div class="form-group">
-                    <label for="password">비밀번호</label>
-                    <input type="password" class="form-control" id="password" name="password" placeholder="비밀번호를 입력하세요" required>
+                        <label for="password">비밀번호</label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="비밀번호를 입력하세요">
+                        <!-- [추가] 비밀번호 필드 오류 메시지 -->
+                        <p th:if="${passwordError}" th:text="${passwordError}" class="text-danger small"></p>
                     </div>
+
                     <!-- 나이 -->
                     <div class="form-group">
-                    <label for="age">나이</label>
-                    <input type="number" class="form-control" id="age" name="age" placeholder="나이를 입력하세요" required>
+                        <label for="age">나이</label>
+                        <input type="text" class="form-control" id="age" name="age" placeholder="나이를 입력하세요">
+                        <!-- [추가] 나이 필드 오류 메시지 -->
+                        <p th:if="${ageError}" th:text="${ageError}" class="text-danger small"></p>
                     </div>
+
                     <!-- 전화번호 -->
                     <div class="form-group">
-                    <label for="mobile">전화번호</label>
-                    <input type="tel" class="form-control" id="mobile" name="mobile" placeholder="010-1234-5678" required>
+                        <label for="mobile">전화번호</label>
+                        <input type="tel" class="form-control" id="mobile" name="mobile" placeholder="010-1234-5678">
+                        <!-- [추가] 전화번호 필드 오류 메시지 -->
+                        <p th:if="${mobileError}" th:text="${mobileError}" class="text-danger small"></p>
                     </div>
+
                     <!-- 주소 -->
                     <div class="form-group">
-                    <label for="address">주소</label>
-                    <input type="text" class="form-control" id="address" name="address" placeholder="주소를 입력하세요" required>
+                        <label for="address">주소</label>
+                        <input type="text" class="form-control" id="address" name="address" placeholder="주소를 입력하세요">
+                        <!-- [추가] 주소 필드 오류 메시지 -->
+                        <p th:if="${addressError}" th:text="${addressError}" class="text-danger small"></p>
                     </div>
+
                     <!-- 회원가입 버튼 -->
                     <div class="text-center mt-4">
-                    <button type="submit" class="btn btn-primary btn-block">회원가입하기</button>
+                        <button type="submit" class="btn btn-primary btn-block">회원가입하기</button>
                     </div>
                 </form>
-                </div>
             </div>
         </div>
     </div>
 </div>
-
-
 </body>
 </html>
-
-
