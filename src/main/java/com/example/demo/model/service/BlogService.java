@@ -1,5 +1,7 @@
 package com.example.demo.model.service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,8 +44,16 @@ public class BlogService {
      * 새로운 게시글을 DB에 저장 (글쓰기 기능)
      * AddArticleRequest의 toEntity() 메소드를 사용
      */
-    public Board save(AddArticleRequest request) {
-        return blogRepository.save(request.toEntity());
+    public Board save(AddArticleRequest request, String email) { // [수정] email 파라미터 추가
+        return blogRepository.save(
+                Board.builder()
+                        .title(request.getTitle())
+                        .content(request.getContent())
+                        .user(email) // [수정] 'GUEST' 대신 파라미터로 받은 email 사용
+                        .newdate(LocalDate.now().format(DateTimeFormatter.ofPattern("MM월 dd일")))
+                        .count("0")
+                        .likec("0")
+                        .build());
     }
 
     /**

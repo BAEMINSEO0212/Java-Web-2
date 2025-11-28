@@ -6,59 +6,82 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import com.example.demo.model.service.AddMemberRequest;
 
 import com.example.demo.model.domain.Member;
+import com.example.demo.model.service.AddMemberRequest;
 import com.example.demo.model.service.MemberService;
-import jakarta.validation.Valid;
 
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
+// [추가] 세션 및 쿠키 처리를 위한 import
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 @Controller
 public class MemberController {
+
     @Autowired
     private MemberService memberService;
 
-    @GetMapping("/join_new") // 회원 가입 페이지 연결
+    @GetMapping("/join_new")
     public String join_new() {
-        return "join_new"; // .HTML 연결
-    }
-
-    @GetMapping("/member_login") // 로그인 페이지 연결
-    public String member_login() {
-        return "login"; // .HTML 연결
-    }
-
-    @PostMapping("/api/login_check") // 로그인(아이디, 패스워드) 체크
-    public String checkMembers(@ModelAttribute AddMemberRequest request, Model model) {
-        try {
-            Member member = memberService.loginCheck(request.getEmail(), request.getPassword()); // 패스워드 반환
-            model.addAttribute("member", member); // 로그인 성공 시 회원 정보 전달
-            return "redirect:/board_list"; // 로그인 성공 후 이동할 페이지
-        } catch (IllegalArgumentException e) {
-            model.addAttribute("error", e.getMessage()); // 에러 메시지 전달
-            return "login"; // 로그인 실패 시 로그인 페이지로 리다이렉트
-        }
+        return "join_new";
     }
 
     @PostMapping("/api/members")
-    public String addmembers(@Valid @ModelAttribute AddMemberRequest request, BindingResult bindingResult,
-            Model model) {
-
-        // [핵심] 검증 오류가 있는지 확인
-        if (bindingResult.hasErrors()) {
-            // 오류가 있다면, 오류 메시지를 Model에 담아서
-            for (FieldError error : bindingResult.getFieldErrors()) {
-                model.addAttribute(error.getField() + "Error", error.getDefaultMessage());
-            }
-            // 다시 회원가입 페이지(join_new.html)로 돌려보냄
-            return "join_new";
-        }
-
-        // 검증을 통과해야만 아래 코드가 실행됨
+    public String addmembers(@Valid @ModelAttribute AddMemberRequest request) {
         memberService.saveMember(request);
         return "join_end";
     }
 
+    @GetMapping("/member_login")
+    public String member_login() {
+        return "login";
+    }
+
+    /**
+     * [11주차 17페이지 핵심]
+     * 로그인 요청 시, 기존에 다른 사용자의 세션이 남아있다면 파기하고
+     * 새로운 세션을 생성하여 중복 로그인을 방지하고 단일 사용자만 로그인되도록 처리합니다.
+     */
+    @PostMapping("/api/login_check")
+    public String checkMembers(@ModelAttribute AddMemberRequest request, Model model,
+            HttpServletRequest request2, HttpServletResponse response) { // [수정] HttpServletRequest/Response 추가
+
+        // --- 17페이지 추가된 내용 시작 ---
+        HttpSession session = request2.getSession(false); // 기존 세션 가져오기 (없으면 null 반환)
+        if (session != null) {
+            session.invalidate(); // 기존 세션 무효화
+            Cookie cookie = new Cookie("JSESSIONID", null); // JSESSIONID 쿠키 초기화
+            cookie.setPath("/"); // 쿠키 경로 설정
+            cookie.setMaxAge(0); // 쿠키 삭제 (만료 시간을 0으로 설정)
+            response.addCookie(cookie); // 응답에 쿠키를 추가하여 클라이언트에 전달
+        }
+        // 새로운 세션 생성
+        session = request2.getSession(true);
+        // --- 17페이지 추가된 내용 끝 ---
+
+        try {
+            Member member = memberService.loginCheck(request.getEmail(), request.getPassword());
+
+            // 새로운 세션에 현재 로그인한 사용자 정보 저장
+            session.setAttribute("userId", member.getId().toString());
+            session.setAttribute("email", member.getEmail());
+
+            return "redirect:/board_list";
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+            return "login";
+        }
+    }
+
+    @GetMapping("/api/logout")
+    public String logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        return "redirect:/member_login";
+    }
 }

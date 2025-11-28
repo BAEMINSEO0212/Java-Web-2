@@ -42,19 +42,30 @@
             </table>
 
             <!-- 수정 / 삭제 버튼 영역 -->
-            <div>
-                <!-- 수정 버튼: board_edit/{id} 경로로 GET 요청을 보냅니다. -->
-                <a class="btn btn-warning" th:href="@{/board_edit/{id}(id=*{id})}">수정</a>
+            <div th:if="${currentUserEmail == board.user}">
+                <!-- 수정 버튼 -->
+                <a class="btn btn-warning" th:href="@{/board_edit/{id}(id=${board.id})}">수정</a>
 
-                <!-- 
-                    [핵심] 삭제 버튼 폼:
-                    - th:action: /api/board_delete/{id} 경로로 POST 요청을 보냅니다.
-                    - hidden input: 실제로는 DELETE 메소드 요청임을 서버에 알려줍니다.
-                -->
-                <form th:action="@{/api/board_delete/{id}(id=*{id})}" method="post" style="display:inline;">
+                <!-- 삭제 버튼 폼 -->
+                <form th:action="@{/api/board_delete/{id}(id=${board.id})}" method="post" style="display:inline;">
                     <input type="hidden" name="_method" value="delete">
                     <button type="submit" class="btn btn-danger">삭제</button>
                 </form>
+            </div>
+
+            <!--
+            <div>
+                수정 버튼: board_edit/{id} 경로로 GET 요청을 보냅니다.
+                <a class="btn btn-warning" th:href="@{/board_edit/{id}(id=*{id})}">수정</a>
+
+                
+                    [핵심] 삭제 버튼 폼:
+                    - th:action: /api/board_delete/{id} 경로로 POST 요청을 보냅니다.
+                    - hidden input: 실제로는 DELETE 메소드 요청임을 서버에 알려줍니다.
+                <form th:action="@{/api/board_delete/{id}(id=*{id})}" method="post" style="display:inline;">
+                    <input type="hidden" name="_method" value="delete">
+                    <button type="submit" class="btn btn-danger">삭제</button>
+                </form>-->
 
                 <!-- 목록으로 돌아가는 버튼 -->
                 <a class="btn btn-secondary" href="/board_list">목록</a>

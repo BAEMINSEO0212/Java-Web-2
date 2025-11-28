@@ -21,6 +21,8 @@ import com.example.demo.model.domain.Board;
 import com.example.demo.model.service.AddArticleRequest;
 import com.example.demo.model.service.BlogService;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 public class BlogController {
 
@@ -41,7 +43,18 @@ public class BlogController {
     @GetMapping("/board_list")
     public String board_list(Model model,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "") String keyword) {
+            @RequestParam(defaultValue = "") String keyword,
+            HttpSession session) { // [수정] HttpSession 파라미터 추가
+
+        // ▼▼▼ [추가] 로그인 페이지로 강제로 보내는 기능 ▼▼▼
+        String userId = (String) session.getAttribute("userId"); // 세션에서 "userId"를 가져옴
+        if (userId == null) {
+            return "redirect:/member_login"; // "userId"가 없으면(로그인 안 했으면) 로그인 페이지로 보냄
+        }
+        // ▲▲▲ 여기까지 추가 ▲▲▲
+
+        String email = (String) session.getAttribute("email"); // [추가] 세션에서 이메일 가져오기
+        model.addAttribute("email", email); // [추가] 모델에 이메일 담기
 
         int pageSize = 3; // 한 페이지에 보여줄 게시글 수를 3으로 설정
         Pageable pageable = PageRequest.of(page, pageSize);
@@ -67,11 +80,13 @@ public class BlogController {
     }
 
     @GetMapping("/board_view/{id}")
-    public String board_view(Model model, @PathVariable Long id) {
+    public String board_view(Model model, @PathVariable Long id, HttpSession session) { // [수정] HttpSession 추가
         Optional<Board> boardData = blogService.findById(id);
         if (boardData.isPresent()) {
             // [수정] 상세 페이지에서는 단일 객체를 전달하므로 'board'라는 이름이 더 적합합니다. (기존 'boards' -> 'board')
             model.addAttribute("board", boardData.get());
+            String currentUserEmail = (String) session.getAttribute("email");
+            model.addAttribute("currentUserEmail", currentUserEmail);
             return "board_view";
         } else {
             return "/error_page/article_error";
@@ -85,8 +100,9 @@ public class BlogController {
     }
 
     @PostMapping("/api/boards")
-    public String addBoard(@ModelAttribute AddArticleRequest request) {
-        blogService.save(request);
+    public String addBoard(@ModelAttribute AddArticleRequest request, HttpSession session) { // [수정] HttpSession 추가
+        String email = (String) session.getAttribute("email"); // [추가] 세션에서 email 가져오기
+        blogService.save(request, email); // [수정] save 메소드에 email 전달
         return "redirect:/board_list";
     }
 
@@ -114,4 +130,5 @@ public class BlogController {
         blogService.delete(id);
         return "redirect:/board_list";
     }
+
 }
