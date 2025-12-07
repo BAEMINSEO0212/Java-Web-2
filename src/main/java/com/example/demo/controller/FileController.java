@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
@@ -29,13 +31,18 @@ public class FileController {
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
+
+            // 12주차 연습문제
+            // [수정] 파일 이름 생성 로직 변경
             String sanitizedEmail = email.replaceAll("[^a-zA-Z0-9]", "_");
-            Path filePath = uploadPath.resolve(sanitizedEmail + ".txt"); // 업로드
-                                                                         // 폴더에
-                                                                         // .txt
-                                                                         // 이름
-                                                                         // 설정
+            // 현재 시간을 "yyyyMMdd_HHmmss" 형식의 문자열로 만듭니다. (예: 20251207_093100)
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+            // 파일 이름을 "이메일_타임스탬프.txt" 형식으로 조합하여 고유하게 만듭니다.
+            String uniqueFileName = sanitizedEmail + "_" + timestamp + ".txt";
+            Path filePath = uploadPath.resolve(uniqueFileName);
+
             System.out.println("File path: " + filePath); // 디버깅용 출력
+
             try (BufferedWriter writer = new BufferedWriter(
                     new OutputStreamWriter(new FileOutputStream(filePath.toFile()), StandardCharsets.UTF_8))) {
                 writer.write("메일 제목: " + subject);
@@ -49,10 +56,7 @@ public class FileController {
         } catch (IOException e) {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("message", "업로드 중 오류가 발생했습니다.");
-            return "/error_page/article_error"; // 오류
-                                                // 처리
-                                                // 페이지로
-                                                // 연결
+            return "/error_page/article_error"; // [추가] 파일 업로드 에러 페이지 처리
         }
         return "upload_end"; // .html 파일 연동
     }
