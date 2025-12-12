@@ -2,13 +2,16 @@ package com.example.demo.controller;
 
 import com.example.demo.model.domain.TestDB;
 import com.example.demo.model.service.TestService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.ui.Model; // 추가된 부분
-
+import org.springframework.ui.Model;
 import java.util.List;
+
+/**
+ * 학기 초반에 스프링 부트의 다양한 기능을 테스트하기 위해 사용했던 컨트롤러.
+ * 현재는 대부분의 기능이 `BlogController`와 `MemberController`로 이전되었습니다.
+ */
 
 @Controller
 public class DemoController {
@@ -36,6 +39,7 @@ public class DemoController {
         model.addAttribute("comment", "매우 좋습니다.");
         return "hello2";
     }
+
     // 2주차 과제 응용2 부분(List 사용)
     /*
      * @GetMapping("/hello2")
@@ -54,12 +58,12 @@ public class DemoController {
      */
 
     // 3주차 추가 부분(about_detailed.html 연결)
-
     @GetMapping("/about_detailed")
     public String about() {
         return "about_detailed";
     }
 
+    // [4주차] Thymeleaf의 다양한 속성(th:utext, th:value, th:href 등)을 테스트하기 위한 맵핑
     @GetMapping("/test1")
     public String thymeleaf_test1(Model model) {
         model.addAttribute("data1", "<h2> 반갑습니다 </h2>");
@@ -75,6 +79,7 @@ public class DemoController {
     TestService testService; // DemoController 클래스 아래 객체 생성
     // 하단에 맵핑 이어서 추가
 
+    // [4주차] 데이터베이스 연동 테스트 (TestDB 엔티티 사용)
     @GetMapping("/testdb")
     public String getAllTestDBs(Model model) {
         List<TestDB> userList = testService.findAll();

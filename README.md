@@ -215,4 +215,42 @@
 - **지도 위치**: 구글 지도 `<iframe>`을 활용하여 **성결대학교 성결관**의 위치를 정확하게 표시했습니다.
 - **저작권 정보**: 페이지 최하단 Copyright 부분에 교수님의 지도에 따라 제 이름을 명시하여, 이 페이지의 제작자임을 밝혔습니다.
 
+## </details>
+
+---
+
+## 4. 주요 오류 및 해결 과정
+
+프로젝트를 진행하면서 여러 오류와 경고를 마주쳤지만, 그중 가장 꾸준히 발생하며 해결 과정에서 많은 것을 배울 수 있었던 Null type safety 경고에 대해 정리하고자 합니다.
+
+<details>
+<summary><strong>문제 현상: `Null type safety` 경고 발생</strong></summary>
+발생 위치: BlogService.java, MemberService.java 서비스 계층의 여러 메소드에서 발생.
+경고 메시지: Null type safety: The expression of type '...' needs unchecked conversion to conform to '@NonNull ...'
+상세 내용:
+findById(Long id)와 같이 ID를 파라미터로 받는 메소드.
+findAll(Pageable pageable)과 같이 페이징 객체를 파라미터로 받는 메소드.
+repository.save()의 반환 값을 처리하는 메소드 등에서 다수의 경고가 발생했습니다.
+</details>
+
+<details>
+<summary><strong>원인 분석: Null 안정성에 대한 컴파일러의 경고</strong></summary>
+이 경고는 프로그램 실행을 막는 '오류(Error)'가 아닌, 코드의 잠재적인 위험을 알려주는 '경고(Warning)'였습니다. 원인을 분석한 결과, 다음과 같은 두 가지 경우에 발생함을 확인했습니다.
+파라미터의 Null 가능성: Spring Data JPA와 같은 최신 라이브러리는 내부적으로 메소드의 파라미터가 null이 아니라고 기대(@NonNull)합니다. 하지만 제가 작성한 findById(Long id)와 같은 메소드에서는 id 값에 null이 들어올 가능성을 컴파일러가 배제할 수 없기 때문에, "이 파라미터는 null이 아님을 보장해야 한다"는 의미의 경고가 발생했습니다.
+반환 값의 Null 가능성: repository.save()와 같은 메소드는 저장된 객체를 반환하지만, 특정 상황(예: DB 설정 오류)에서는 null을 반환할 수도 있습니다. 컴파일러는 이 가능성을 인지하고, "반환되는 객체가 null일 수도 있으니 주의하라"는 의미의 경고를 발생시켰습니다.
+</details>
+
+<details>
+<summary><strong>해결 과정: `@NonNull`과 `@SuppressWarnings`를 이용한 명시적 처리</strong></summary>
+단순히 경고 설정을 끄는 대신, 코드의 의도를 명확하게 표현하여 경고의 근본 원인을 해결하는 방식을 선택했습니다.
+파라미터 경고 해결 (@NonNull):
+lombok.NonNull을 import 한 후, 경고가 발생한 모든 메소드의 파라미터 앞에 @NonNull 어노테이션을 추가했습니다.
+(예: public Optional<Board> findById(@NonNull Long id))
+이를 통해 "이 파라미터는 절대 null 값을 받지 않을 것"이라고 컴파일러에게 명시적으로 알려주어, 파라미터와 관련된 대부분의 경고를 해결했습니다.
+반환 값 경고 해결 (@SuppressWarnings):
+save() 메소드와 같이, 라이브러리의 반환 값 자체에서 발생하는 경고는 @NonNull로 해결하기 어려웠습니다.
+이 경우, @SuppressWarnings("null") 어노테이션을 해당 메소드 바로 위에 추가했습니다.
+(예: @SuppressWarnings("null") public Member saveMember(...))
+이 어노테이션은 "개발자인 내가 이 메소드의 null 관련 안정성을 직접 확인하고 보증하니, 더 이상 이 메소드에 대해서는 경고를 표시하지 말라"고 컴파일러에게 지시하는 역할을 합니다.
+결과: 위 두 가지 방법을 통해 프로젝트의 모든 Null type safety 경고를 성공적으로 제거했습니다. 이 과정을 통해 단순히 기능을 구현하는 것을 넘어, Null 안정성을 고려한 견고한 코드를 작성하는 것의 중요성을 배울 수 있었습니다.
 </details>

@@ -8,11 +8,13 @@ import org.springframework.stereotype.Service;
 import com.example.demo.model.domain.Board;
 import com.example.demo.model.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
-
-// [추가] 페이징 관련 클래스 import
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+// [해결] @NonNull 어노테이션을 import 합니다.
+import lombok.NonNull;
+
+// [7주차] 게시판(Board) 관련 핵심 비즈니스 로직을 처리하는 서비스 클래스.
 @Service
 @RequiredArgsConstructor
 public class BlogService {
@@ -20,30 +22,24 @@ public class BlogService {
     @Autowired
     private final BoardRepository blogRepository;
 
-    /**
-     * [9주차] 페이징이 적용된 전체 게시글 조회
-     */
-    public Page<Board> findAll(Pageable pageable) {
+    // [9주차] 페이징이 적용된 전체 게시글 목록을 조회합니다. (검색어 없는 경우)
+    public Page<Board> findAll(@NonNull Pageable pageable) { // [해결] pageable 파라미터에 @NonNull 추가
         return blogRepository.findAll(pageable);
     }
 
-    /**
-     * ID로 특정 게시글 하나를 조회
-     */
-    public Optional<Board> findById(Long id) {
+    // [7주차] ID를 이용해 특정 게시글 하나를 조회합니다. (상세 보기 기능)
+    public Optional<Board> findById(@NonNull Long id) { // [해결] pageable 파라미터에 @NonNull 추가
         return blogRepository.findById(id);
     }
 
-    // [9주차] 키워드를 포함한 게시글을 페이징하여 검색
-
-    public Page<Board> searchByKeyword(String keyword, Pageable pageable) {
+    // [9주차] 제목에 특정 키워드가 포함된 게시글을 페이징하여 검색합니다.
+    public Page<Board> searchByKeyword(String keyword, @NonNull Pageable pageable) { // [해결] pageable 파라미터에 @NonNull 추가
         return blogRepository.findByTitleContainingIgnoreCase(keyword, pageable);
     }
 
-    /**
-     * 새로운 게시글을 DB에 저장 (글쓰기 기능)
-     * AddArticleRequest의 toEntity() 메소드를 사용
-     */
+    // [9주차] 새로운 게시글을 데이터베이스에 저장합니다. (글쓰기 기능)
+    // [11주차 연습문제] 작성자를 'GUEST'가 아닌 현재 로그인한 사용자의 이메일로 저장하도록 수정되었습니다.
+    @SuppressWarnings("null") // [해결] 이 메소드에서 발생하는 null 관련 경고를 무시하도록 설정
     public Board save(AddArticleRequest request, String email) { // [수정] email 파라미터 추가
         return blogRepository.save(
                 Board.builder()
@@ -56,10 +52,8 @@ public class BlogService {
                         .build());
     }
 
-    /**
-     * 기존 게시글을 수정 (수정 기능)
-     */
-    public void update(Long id, AddArticleRequest request) {
+    // [7주차 연습문제] 기존 게시글의 내용을 수정합니다.
+    public void update(@NonNull Long id, AddArticleRequest request) { // [해결] id 파라미터에 @NonNull 추가
         Optional<Board> optionalBoard = blogRepository.findById(id);
         optionalBoard.ifPresent(board -> {
             board.update(
@@ -73,10 +67,8 @@ public class BlogService {
         });
     }
 
-    /**
-     * 특정 게시글을 삭제 (삭제 기능)
-     */
-    public void delete(Long id) {
+    // [9주차 연습문제] ID를 이용해 특정 게시글을 삭제합니다.
+    public void delete(@NonNull Long id) { // [해결] id 파라미터에 @NonNull 추가
         blogRepository.deleteById(id);
     }
 }

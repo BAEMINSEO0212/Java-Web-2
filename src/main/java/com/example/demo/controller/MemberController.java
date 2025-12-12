@@ -6,35 +6,37 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-
 import com.example.demo.model.domain.Member;
 import com.example.demo.model.service.AddMemberRequest;
 import com.example.demo.model.service.MemberService;
-
-// [추가] 세션 및 쿠키 처리를 위한 import
-//import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-//import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+// [추가] 세션 및 쿠키 처리를 위한 import
+//import jakarta.servlet.http.Cookie;
 
+// 회원(Member) 관련 웹 요청(회원가입, 로그인, 로그아웃)을 처리하는 컨트롤러.
 @Controller
 public class MemberController {
 
     @Autowired
     private MemberService memberService;
 
+    // [10주차] 회원가입 페이지(View)를 보여주는 메소
     @GetMapping("/join_new")
     public String join_new() {
         return "join_new";
     }
 
+    // [10주차] 회원가입 폼에서 전송된 데이터를 DB에 저장하는 메소드.
+    // [10주차 연습문제] @Valid 어노테이션을 통해 DTO의 유효성 검증을 활성화.
     @PostMapping("/api/members")
     public String addmembers(@Valid @ModelAttribute AddMemberRequest request) {
         memberService.saveMember(request);
         return "join_end";
     }
 
+    // [10주차] 로그인 페이지(View)를 보여주는 메소드.
     @GetMapping("/member_login")
     public String member_login() {
         return "login";
