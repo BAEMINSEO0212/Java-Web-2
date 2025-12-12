@@ -242,7 +242,7 @@
 </details>
 
 <details>
-<summary><strong>원인 분석: Null 안정성에 대한 컴파일러의 경고</strong></summary>
+<summary><strong>해결 과정: `@NonNull`과 `@SuppressWarnings`를 이용한 명시적 처리</strong></summary>
 
 - **해결 전략**: 단순히 경고 설정을 끄는 대신, 코드의 의도를 명확하게 표현하여 경고의 근본 원인을 해결하는 방식을 선택했습니다.
 - **파라미터 경고 해결 (@NonNull)**: lombok.NonNull을 import 한 후, 경고가 발생한 모든 메소드의 파라미터 앞에 @NonNull 어노테이션을 추가했습니다. (예: public Optional findById(@NonNull Long id))
